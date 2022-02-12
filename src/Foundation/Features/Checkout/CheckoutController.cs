@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EPiServer.Globalization;
 
 namespace Foundation.Features.Checkout
 {
@@ -111,7 +112,7 @@ namespace Foundation.Features.Checkout
 
             if (!HttpContext.User.Identity.IsAuthenticated && (!isGuest.HasValue || isGuest.Value != 1))
             {
-                return RedirectToAction("CheckoutMethod", new { node = currentPage.ContentLink });
+                return RedirectToContent(currentPage.ContentLink, "CheckoutMethod", ContentLanguage.PreferredCulture.Name);
             }
 
             if (CartWithValidationIssues.Cart.GetFirstShipment().ShippingMethodId == Guid.Empty)
@@ -432,7 +433,7 @@ namespace Foundation.Features.Checkout
                 return RedirectToAction("Index", "Login", new { returnUrl = content != null ? _urlHelper.ContentUrl(content) : "/" });
             }
 
-            return RedirectToAction("Index", new { node = content, isGuest = 1 });
+            return new FoundationRedirectToContentResult(content, "Index", ContentLanguage.PreferredCulture.Name, new { isGuest = 1 });
         }
 
         [HttpPost]
@@ -446,7 +447,7 @@ namespace Foundation.Features.Checkout
                 return View("CheckoutMethod", viewModel);
             }
 
-            return RedirectToAction("Index", "Checkout");
+            return RedirectToContent(viewModel.CurrentContent.ContentLink, "Index");
         }
 
         [HttpPost]
@@ -499,7 +500,7 @@ namespace Foundation.Features.Checkout
                 stateValues.AddRange(ModelState.Select(x => new KeyValuePair<string, string>(x.Key, x.Value.Errors.FirstOrDefault().ErrorMessage)));
                 TempData.Set("ModelState", stateValues);
                 TempData.Set("ShipmentBillingTypes", errorTypes);
-                return RedirectToAction("Index");
+                return RedirectToContent(currentPage.ContentLink, "Index");
             }
 
             try
@@ -508,7 +509,7 @@ namespace Foundation.Features.Checkout
                 if (purchaseOrder == null)
                 {
                     TempData[Constant.ErrorMessages] = "There is no payment was processed";
-                    return RedirectToAction("Index");
+                    return RedirectToContent(currentPage.ContentLink, "Index");
                 }
 
                 if (checkoutViewModel.BillingAddressType == 0)
@@ -547,7 +548,7 @@ namespace Foundation.Features.Checkout
             catch (Exception e)
             {
                 TempData[Constant.ErrorMessages] = e.Message;
-                return RedirectToAction("Index");
+                return RedirectToContent(currentPage.ContentLink, "Index");
             }
         }
 
