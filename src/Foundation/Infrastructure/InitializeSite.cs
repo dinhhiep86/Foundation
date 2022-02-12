@@ -48,6 +48,7 @@ using Foundation.Infrastructure.Commerce.Markets;
 using Foundation.Infrastructure.Display;
 using Foundation.Infrastructure.Find.Facets;
 using Foundation.Infrastructure.Find.Facets.Config;
+using Foundation.Infrastructure.Helpers;
 using Foundation.Infrastructure.SchemaMarkup;
 //using Foundation.Infrastructure.Services;
 using Mediachase.Commerce.Orders;
@@ -126,6 +127,7 @@ namespace Foundation.Infrastructure
             _services.AddSingleton<ISearchService, SearchService>();
             _services.AddSingleton<CatalogContentClientConventions, FoundationFindConventions>();
             _services.AddSingleton<CatalogContentEventListener, FoundationCatalogContentEventListener>();
+            _services.AddSingleton<IActionResultExecutor<FoundationRedirectToContentResult>, FoundationRedirectToContentResultExecutor>();
             //_services.AddTransient<IContentQuery, LandingPagesSlice>();
             //_services.AddTransient<IContentSlice, LandingPagesSlice>();
             //_services.AddTransient<IContentQuery, StandardPagesSlice>();
